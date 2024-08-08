@@ -2,6 +2,7 @@ package br.com.acc.bancoonline.service;
 
 import br.com.acc.bancoonline.dto.ContaCorrenteDTO;
 import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
+import br.com.acc.bancoonline.exceptions.ClienteNaoEncontradoException;
 import br.com.acc.bancoonline.exceptions.ContaCorrenteNaoEncontradaException;
 import br.com.acc.bancoonline.model.ContaCorrente;
 import br.com.acc.bancoonline.model.Extrato;
@@ -18,9 +19,9 @@ import java.util.Objects;
 public class ContaCorrenteService {
     private final ContaCorrenteRepository repository;
 
-    private final ExtratoService extratoService;
+    private final ClienteService clienteService;
     
-    public void create(ContaCorrenteDTO contaCorrenteDTO) throws CampoVazioGenericoException {
+    public void create(ContaCorrenteDTO contaCorrenteDTO) throws CampoVazioGenericoException, ClienteNaoEncontradoException {
         if (Objects.isNull(contaCorrenteDTO.getAgencia()) && Objects.isNull(contaCorrenteDTO.getNumero()) ){
             throw new CampoVazioGenericoException();
         }
@@ -28,11 +29,7 @@ public class ContaCorrenteService {
         contaCorrente.setNumero(contaCorrenteDTO.getNumero());
         contaCorrente.setAgencia(contaCorrenteDTO.getAgencia());
         contaCorrente.setSaldo(contaCorrenteDTO.getSaldo());
-        List<Extrato> extratos = new ArrayList<>();
-        if (contaCorrenteDTO.getExtratoIds().size() > 0) {
-            contaCorrenteDTO.getExtratoIds().forEach(extratoId -> extratos.add(extratoService.findById(extratoId)));
-            contaCorrente.setExtratos(extratos);
-        }
+        contaCorrente.setCliente(clienteService.findById(contaCorrenteDTO.getIdCliente()));
 
         repository.save(contaCorrente);
     }
@@ -48,7 +45,7 @@ public class ContaCorrenteService {
         return repository.findAll();
     }
     
-    public ContaCorrente update(int id, ContaCorrenteDTO newContaCorrenteDTO) throws ContaCorrenteNaoEncontradaException, CampoVazioGenericoException {
+    public ContaCorrente update(int id, ContaCorrenteDTO newContaCorrenteDTO) throws ContaCorrenteNaoEncontradaException, CampoVazioGenericoException, ClienteNaoEncontradoException {
         ContaCorrente contaCorrente = this.findById(id);
         if (Objects.isNull(newContaCorrenteDTO.getAgencia()) && Objects.isNull(newContaCorrenteDTO.getNumero()) ){
             throw new CampoVazioGenericoException();
@@ -56,13 +53,8 @@ public class ContaCorrenteService {
         contaCorrente.setAgencia(newContaCorrenteDTO.getAgencia());
         contaCorrente.setSaldo(newContaCorrenteDTO.getSaldo());
         contaCorrente.setNumero(newContaCorrenteDTO.getNumero());
-        List<Extrato> extratos = new ArrayList<>();
-        if (newContaCorrenteDTO.getExtratoIds().size() > 0) {
-            newContaCorrenteDTO.getExtratoIds().forEach(extratoId -> extratos.add(extratoService.findById(extratoId)));
-            contaCorrente.setExtratos(extratos);
-        }
-        repository.save(contaCorrente);
-        return contaCorrente;
+        contaCorrente.setCliente(clienteService.findById(newContaCorrenteDTO.getIdCliente()));
+        return repository.save(contaCorrente);
     }
     
     public void deleteById(int id) throws ContaCorrenteNaoEncontradaException {

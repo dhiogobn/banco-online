@@ -2,6 +2,7 @@ package br.com.acc.bancoonline.controller;
 
 import br.com.acc.bancoonline.dto.ContaCorrenteDTO;
 import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
+import br.com.acc.bancoonline.exceptions.ClienteNaoEncontradoException;
 import br.com.acc.bancoonline.exceptions.ContaCorrenteNaoEncontradaException;
 import br.com.acc.bancoonline.model.ContaCorrente;
 import br.com.acc.bancoonline.service.ContaCorrenteService;
@@ -22,7 +23,7 @@ public class ContaCorrenteController {
     private final ContaCorrenteService service;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody ContaCorrenteDTO contaCorrente) throws CampoVazioGenericoException {
+    public ResponseEntity<Void> create(@RequestBody ContaCorrenteDTO contaCorrente) throws CampoVazioGenericoException, ClienteNaoEncontradoException {
         service.create(contaCorrente);
         return new ResponseEntity<>(CREATED);
     }
@@ -38,7 +39,7 @@ public class ContaCorrenteController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<ContaCorrente> update(@PathVariable int id, @RequestBody ContaCorrenteDTO contaCorrente) throws ContaCorrenteNaoEncontradaException, CampoVazioGenericoException {
+    public ResponseEntity<ContaCorrente> update(@PathVariable int id, @RequestBody ContaCorrenteDTO contaCorrente) throws ContaCorrenteNaoEncontradaException, CampoVazioGenericoException, ClienteNaoEncontradoException {
         return ResponseEntity.ok(service.update(id, contaCorrente));        
     }
     

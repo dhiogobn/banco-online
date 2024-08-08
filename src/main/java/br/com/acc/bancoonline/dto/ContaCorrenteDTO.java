@@ -19,9 +19,7 @@ public class ContaCorrenteDTO {
 
     private String numero;
 
-    @Column
     private double saldo;
 
-    @OneToMany
-    private List<Integer> extratoIds = new ArrayList<>();
+    private int idCliente;
 }

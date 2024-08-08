@@ -17,4 +17,6 @@ public class ExtratoDTO {
     private String operacao;
 
     private double valorOperacao;
+
+    private int idContaCorrente;
 }

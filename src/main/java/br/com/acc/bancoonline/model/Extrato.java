@@ -23,4 +23,7 @@ public class Extrato {
     @Column
     private double valorOperacao;
 
+    @ManyToOne
+    ContaCorrente contaCorrente;
+
 }

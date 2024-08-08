@@ -3,6 +3,7 @@ package br.com.acc.bancoonline.controller;
 import br.com.acc.bancoonline.dto.AgenciaDTO;
 import br.com.acc.bancoonline.exceptions.AgenciaNaoEncontradaException;
 import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
+import br.com.acc.bancoonline.exceptions.ClienteNaoEncontradoException;
 import br.com.acc.bancoonline.model.Agencia;
 import br.com.acc.bancoonline.service.AgenciaService;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class AgenciaController {
     private final AgenciaService service;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody AgenciaDTO agenciaDTO) throws CampoVazioGenericoException {
+    public ResponseEntity<Void> create(@RequestBody AgenciaDTO agenciaDTO) throws CampoVazioGenericoException, ClienteNaoEncontradoException {
         service.create(agenciaDTO);
         return new ResponseEntity<>(CREATED);
     }
@@ -38,7 +39,7 @@ public class AgenciaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Agencia> update(@PathVariable int id, @RequestBody AgenciaDTO agenciaDTO) throws CampoVazioGenericoException, AgenciaNaoEncontradaException {
+    public ResponseEntity<Agencia> update(@PathVariable int id, @RequestBody AgenciaDTO agenciaDTO) throws CampoVazioGenericoException, AgenciaNaoEncontradaException, ClienteNaoEncontradoException {
         return ResponseEntity.ok(service.update(id, agenciaDTO));
     }
 

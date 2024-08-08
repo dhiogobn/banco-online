@@ -13,4 +13,6 @@ public class AgenciaDTO {
     private String endereco;
     private String telefone;
 
+    private int idCliente;
+
 }

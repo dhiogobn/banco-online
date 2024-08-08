@@ -15,7 +15,8 @@ import java.util.List;
 @Entity
 public class Cliente {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Column(length = 45, nullable = false)
@@ -26,10 +27,5 @@ public class Cliente {
 
     @Column(length = 20, nullable = false)
     private String telefone;
-
-    @OneToMany
-    private List<Agencia> agencias = new ArrayList<>();
-
-    @OneToMany
-    private List<ContaCorrente> contaCorrentes = new ArrayList<>();
 }
+

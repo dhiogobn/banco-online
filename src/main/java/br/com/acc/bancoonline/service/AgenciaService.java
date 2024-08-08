@@ -3,6 +3,7 @@ package br.com.acc.bancoonline.service;
 import br.com.acc.bancoonline.dto.AgenciaDTO;
 import br.com.acc.bancoonline.exceptions.AgenciaNaoEncontradaException;
 import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
+import br.com.acc.bancoonline.exceptions.ClienteNaoEncontradoException;
 import br.com.acc.bancoonline.model.Agencia;
 import br.com.acc.bancoonline.repository.AgenciaRepository;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,9 @@ import java.util.Objects;
 public class AgenciaService {
     private final AgenciaRepository repository;
 
-    public void create(AgenciaDTO agenciaDTO) throws CampoVazioGenericoException {
+    private final ClienteService clienteService;
+
+    public void create(AgenciaDTO agenciaDTO) throws CampoVazioGenericoException, ClienteNaoEncontradoException {
         if(Objects.isNull(agenciaDTO.getNomeAgencia()) || Objects.isNull(agenciaDTO.getEndereco()) || Objects.isNull(agenciaDTO.getTelefone())) {
             throw new CampoVazioGenericoException();
         }
@@ -25,6 +28,7 @@ public class AgenciaService {
         agencia.setTelefone(agenciaDTO.getTelefone());
         agencia.setNomeAgencia(agenciaDTO.getNomeAgencia());
         agencia.setEndereco(agenciaDTO.getEndereco());
+        agencia.setCliente(clienteService.findById(agenciaDTO.getIdCliente()));
 
         repository.save(agencia);
     }
@@ -40,7 +44,7 @@ public class AgenciaService {
         return repository.findAll();
     }
 
-    public Agencia update(int id, AgenciaDTO newAgenciaDTO) throws AgenciaNaoEncontradaException, CampoVazioGenericoException {
+    public Agencia update(int id, AgenciaDTO newAgenciaDTO) throws AgenciaNaoEncontradaException, CampoVazioGenericoException, ClienteNaoEncontradoException {
         Agencia agencia = this.findById(id);
         if(Objects.isNull(newAgenciaDTO.getNomeAgencia()) || Objects.isNull(newAgenciaDTO.getEndereco()) || Objects.isNull(newAgenciaDTO.getTelefone())) {
             throw new CampoVazioGenericoException();
@@ -49,6 +53,7 @@ public class AgenciaService {
         agencia.setNomeAgencia(newAgenciaDTO.getNomeAgencia());
         agencia.setEndereco(newAgenciaDTO.getEndereco());
         agencia.setTelefone(newAgenciaDTO.getTelefone());
+        agencia.setCliente(clienteService.findById(newAgenciaDTO.getIdCliente()));
         repository.save(agencia);
         return agencia;
     }

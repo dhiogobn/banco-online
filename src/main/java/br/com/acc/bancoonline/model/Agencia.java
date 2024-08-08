@@ -23,4 +23,6 @@ public class Agencia {
     @Column(length = 15, nullable = false)
     private String telefone;
 
+    @ManyToOne
+    private Cliente cliente;
 }

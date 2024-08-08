@@ -18,7 +18,4 @@ public class ClienteDTO {
 
     private String telefone;
 
-    private List<Integer> agenciaIds = new ArrayList<>();
-
-    private List<Integer> contaCorrenteIds = new ArrayList<>();
 }

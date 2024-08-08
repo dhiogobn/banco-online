@@ -27,6 +27,6 @@ public class ContaCorrente {
     @Column
     private double saldo;
 
-    @OneToMany
-    private List<Extrato> extratos = new ArrayList<>();
+    @ManyToOne
+    private Cliente cliente;
 }

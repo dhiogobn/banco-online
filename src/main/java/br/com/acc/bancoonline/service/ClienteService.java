@@ -20,10 +20,6 @@ import java.util.Objects;
 @AllArgsConstructor
 public class ClienteService {
     private final ClienteRepository repository;
-
-    private final AgenciaService agenciaService;
-
-    private final ContaCorrenteService contaCorrenteService;
     
     public void create(ClienteDTO clienteDTO) throws CampoVazioGenericoException, CpfInvalidoException {
         if (Objects.isNull(clienteDTO.getNome()) && Objects.isNull(clienteDTO.getTelefone()) && Objects.isNull(clienteDTO.getCpf())) {
@@ -36,23 +32,7 @@ public class ClienteService {
         cliente.setNome(clienteDTO.getNome());
         cliente.setTelefone(clienteDTO.getTelefone());
         cliente.setCpf(clienteDTO.getCpf());
-        List<Agencia> agencias = cliente.getAgencias();
-        List< ContaCorrente> contaCorrentes = cliente.getContaCorrentes();
-        if (clienteDTO.getAgenciaIds().size() > 0) {
-            clienteDTO.getAgenciaIds().forEach(id -> agencias.add(agenciaService.findById(id)));
-            cliente.setAgencias(agencias);
 
-        }
-        if (clienteDTO.getContaCorrenteIds().size() > 0) {
-            clienteDTO.getContaCorrenteIds().forEach(id -> {
-                try {
-                    contaCorrentes.add(contaCorrenteService.findById(id));
-                } catch (ContaCorrenteNaoEncontradaException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            cliente.setContaCorrentes(contaCorrentes);
-        }
         repository.save(cliente);
     }
 
@@ -125,23 +105,6 @@ public class ClienteService {
         cliente.setCpf(newClienteDTO.getCpf());
         cliente.setNome(newClienteDTO.getNome());
         cliente.setTelefone(newClienteDTO.getTelefone());
-        List<Agencia> agencias = cliente.getAgencias();
-        List< ContaCorrente> contaCorrentes = cliente.getContaCorrentes();
-        if (newClienteDTO.getAgenciaIds().size() > 0) {
-            newClienteDTO.getAgenciaIds().forEach(agenciaId -> agencias.add(agenciaService.findById(agenciaId)));
-            cliente.setAgencias(agencias);
-
-        }
-        if (newClienteDTO.getContaCorrenteIds().size() > 0) {
-            newClienteDTO.getContaCorrenteIds().forEach(contaCorrenteId -> {
-                try {
-                    contaCorrentes.add(contaCorrenteService.findById(contaCorrenteId));
-                } catch (ContaCorrenteNaoEncontradaException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            cliente.setContaCorrentes(contaCorrentes);
-        }
 
         return repository.save(cliente);
     }

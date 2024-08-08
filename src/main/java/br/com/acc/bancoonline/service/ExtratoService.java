@@ -1,22 +1,42 @@
 package br.com.acc.bancoonline.service;
 
+import br.com.acc.bancoonline.dto.ExtratoDTO;
+import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
+import br.com.acc.bancoonline.exceptions.ContaCorrenteNaoEncontradaException;
+import br.com.acc.bancoonline.exceptions.ExtratoNaoEncontradoException;
 import br.com.acc.bancoonline.model.Extrato;
 import br.com.acc.bancoonline.repository.ExtratoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 public class ExtratoService {
     private final ExtratoRepository repository;
+    private final ContaCorrenteService contaCorrenteService;
     
-    public void create(Extrato extrato) {
+    public void create(ExtratoDTO extratoDTO) throws CampoVazioGenericoException, ContaCorrenteNaoEncontradaException {
+        if (Objects.isNull(extratoDTO.getDataHoraMovimento()) || Objects.isNull(extratoDTO.getOperacao())) {
+            throw new CampoVazioGenericoException();
+        }
+
+        Extrato extrato = new Extrato();
+        extrato.setDataHoraMovimento(LocalDateTime.now());
+        extrato.setOperacao(extratoDTO.getOperacao());
+        extrato.setValorOperacao(extratoDTO.getValorOperacao());
+        extrato.setContaCorrente(contaCorrenteService.findById(extratoDTO.getIdContaCorrente()));
+
         repository.save(extrato);
     }
     
-    public Extrato findById(int id) {
+    public Extrato findById(int id) throws ExtratoNaoEncontradoException {
+        if (repository.findById(id).isEmpty()) {
+            throw new ExtratoNaoEncontradoException();
+        }
         return repository.findById(id).get();
     }
     
@@ -24,16 +44,22 @@ public class ExtratoService {
         return repository.findAll();
     }
     
-    public Extrato update(int id, Extrato newExtrato) {
+    public Extrato update(int id, ExtratoDTO newExtratoDTO) throws ExtratoNaoEncontradoException, CampoVazioGenericoException, ContaCorrenteNaoEncontradaException {
         Extrato extrato = this.findById(id);
-        extrato.setOperacao(newExtrato.getOperacao());
-        extrato.setValorOperacao(newExtrato.getValorOperacao());
-        extrato.setDataHoraMovimento(newExtrato.getDataHoraMovimento());
-        repository.save(extrato);
-        return extrato;
+        if (Objects.isNull(newExtratoDTO.getDataHoraMovimento()) || Objects.isNull(newExtratoDTO.getOperacao())) {
+            throw new CampoVazioGenericoException();
+        }
+        extrato.setOperacao(newExtratoDTO.getOperacao());
+        extrato.setValorOperacao(newExtratoDTO.getValorOperacao());
+        extrato.setDataHoraMovimento(newExtratoDTO.getDataHoraMovimento());
+        extrato.setContaCorrente(contaCorrenteService.findById(newExtratoDTO.getIdContaCorrente()));
+
+
+        return repository.save(extrato);
     }
     
-    public void deleteById(int id) {
-        repository.deleteById(id);
+    public void deleteById(int id) throws ExtratoNaoEncontradoException {
+        Extrato extrato = this.findById(id);
+        repository.delete(extrato);
     }
 }
