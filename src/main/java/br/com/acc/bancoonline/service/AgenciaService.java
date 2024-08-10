@@ -28,7 +28,6 @@ public class AgenciaService {
         agencia.setTelefone(agenciaDTO.getTelefone());
         agencia.setNomeAgencia(agenciaDTO.getNomeAgencia());
         agencia.setEndereco(agenciaDTO.getEndereco());
-        agencia.setCliente(clienteService.findById(agenciaDTO.getIdCliente()));
 
         repository.save(agencia);
     }
@@ -53,7 +52,6 @@ public class AgenciaService {
         agencia.setNomeAgencia(newAgenciaDTO.getNomeAgencia());
         agencia.setEndereco(newAgenciaDTO.getEndereco());
         agencia.setTelefone(newAgenciaDTO.getTelefone());
-        agencia.setCliente(clienteService.findById(newAgenciaDTO.getIdCliente()));
         repository.save(agencia);
         return agencia;
     }
