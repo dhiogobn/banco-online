@@ -48,4 +48,9 @@ public class ExtratoController {
         service.deleteById(id);
         return new ResponseEntity<>(OK);
     }
+
+    @GetMapping("/extratosDaConta/{ContaCorrenteId}")
+    public ResponseEntity<List<Extrato>> findAllByContaCorrenteId(@PathVariable int ContaCorrenteId) throws ExtratoNaoEncontradoException {
+        return ResponseEntity.ok(service.findAllByContaCorrenteId(ContaCorrenteId));
+    }
 }

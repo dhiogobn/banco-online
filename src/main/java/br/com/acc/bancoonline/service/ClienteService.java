@@ -3,12 +3,8 @@ package br.com.acc.bancoonline.service;
 import br.com.acc.bancoonline.dto.ClienteDTO;
 import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
 import br.com.acc.bancoonline.exceptions.ClienteNaoEncontradoException;
-import br.com.acc.bancoonline.exceptions.ContaCorrenteNaoEncontradaException;
 import br.com.acc.bancoonline.exceptions.CpfInvalidoException;
-import br.com.acc.bancoonline.model.Agencia;
 import br.com.acc.bancoonline.model.Cliente;
-import br.com.acc.bancoonline.model.ContaCorrente;
-import br.com.acc.bancoonline.repository.AgenciaRepository;
 import br.com.acc.bancoonline.repository.ClienteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,41 +40,41 @@ public class ClienteService {
         if (cpf.length() != 11) {
             return false;
         }
-
-        // Verificar se todos os dígitos são iguais
-        if (cpf.matches("(\\d)\\1{10}")) {
-            return false;
-        }
-
-        // Calcular o primeiro dígito verificador
-        int sum = 0;
-        for (int i = 0; i < 9; i++) {
-            sum += (cpf.charAt(i) - '0') * (10 - i);
-        }
-        int firstVerifier = 11 - (sum % 11);
-        if (firstVerifier >= 10) {
-            firstVerifier = 0;
-        }
-
-        // Verificar o primeiro dígito verificador
-        if (firstVerifier != (cpf.charAt(9) - '0')) {
-            return false;
-        }
-
-        // Calcular o segundo dígito verificador
-        sum = 0;
-        for (int i = 0; i < 10; i++) {
-            sum += (cpf.charAt(i) - '0') * (11 - i);
-        }
-        int secondVerifier = 11 - (sum % 11);
-        if (secondVerifier >= 10) {
-            secondVerifier = 0;
-        }
-
-        // Verificar o segundo dígito verificador
-        if (secondVerifier != (cpf.charAt(10) - '0')) {
-            return false;
-        }
+//
+//        // Verificar se todos os dígitos são iguais
+//        if (cpf.matches("(\\d)\\1{10}")) {
+//            return false;
+//        }
+//
+//        // Calcular o primeiro dígito verificador
+//        int sum = 0;
+//        for (int i = 0; i < 9; i++) {
+//            sum += (cpf.charAt(i) - '0') * (10 - i);
+//        }
+//        int firstVerifier = 11 - (sum % 11);
+//        if (firstVerifier >= 10) {
+//            firstVerifier = 0;
+//        }
+//
+//        // Verificar o primeiro dígito verificador
+//        if (firstVerifier != (cpf.charAt(9) - '0')) {
+//            return false;
+//        }
+//
+//        // Calcular o segundo dígito verificador
+//        sum = 0;
+//        for (int i = 0; i < 10; i++) {
+//            sum += (cpf.charAt(i) - '0') * (11 - i);
+//        }
+//        int secondVerifier = 11 - (sum % 11);
+//        if (secondVerifier >= 10) {
+//            secondVerifier = 0;
+//        }
+//
+//        // Verificar o segundo dígito verificador
+//        if (secondVerifier != (cpf.charAt(10) - '0')) {
+//            return false;
+//        }
 
         return true;
     }

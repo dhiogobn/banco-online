@@ -1,9 +1,7 @@
 package br.com.acc.bancoonline.controller;
 
 import br.com.acc.bancoonline.dto.ContaCorrenteDTO;
-import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
-import br.com.acc.bancoonline.exceptions.ClienteNaoEncontradoException;
-import br.com.acc.bancoonline.exceptions.ContaCorrenteNaoEncontradaException;
+import br.com.acc.bancoonline.exceptions.*;
 import br.com.acc.bancoonline.model.ContaCorrente;
 import br.com.acc.bancoonline.service.ContaCorrenteService;
 import lombok.AllArgsConstructor;
@@ -48,4 +46,24 @@ public class ContaCorrenteController {
         service.deleteById(id);
         return new ResponseEntity<>(OK);
     }
+    @GetMapping("/consultarDadosDaConta/{cpf}")
+    public ResponseEntity<ContaCorrente> consultarDadosDaConta(@PathVariable String cpf) throws ContaCorrenteNaoEncontradaException {
+        return ResponseEntity.ok(service.getContaByCpf(cpf));
+    }
+
+    @PatchMapping("/depositar/{idContaCorrente}/{valor}")
+    public ResponseEntity<Double> depositar(@PathVariable int idContaCorrente, @PathVariable double valor) throws ContaCorrenteNaoEncontradaException, DepositoInvalidoException, CampoVazioGenericoException {
+        return ResponseEntity.ok(service.depositar(idContaCorrente, valor));
+    }
+
+    @PatchMapping("/sacar/{idContaCorrente}/{valor}")
+    public ResponseEntity<Double> sacar(@PathVariable int idContaCorrente, @PathVariable double valor) throws ContaCorrenteNaoEncontradaException, SaqueInvalidoException, CampoVazioGenericoException {
+        return ResponseEntity.ok(service.sacar(idContaCorrente, valor));
+    }
+
+    @PatchMapping("/transferir/{valor}/{idConta}/{cpfDestinatario}")
+    public ResponseEntity<Double> tranferir(@PathVariable double valor,@PathVariable int idConta,@PathVariable String cpfDestinatario) throws ContaCorrenteNaoEncontradaException, SaqueInvalidoException, CampoVazioGenericoException {
+        return ResponseEntity.ok(service.transferir(valor, idConta, cpfDestinatario));
+    }
+
 }

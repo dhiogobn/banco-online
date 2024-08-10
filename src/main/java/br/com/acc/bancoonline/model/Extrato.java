@@ -18,7 +18,7 @@ public class Extrato {
 
     @Column(nullable = false)
     private LocalDateTime dataHoraMovimento;
-    @Column(length = 10, nullable = false)
+    @Column(length = 12, nullable = false)
     private String operacao;
     @Column
     private double valorOperacao;

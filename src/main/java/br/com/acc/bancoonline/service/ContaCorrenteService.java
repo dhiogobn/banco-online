@@ -1,16 +1,16 @@
 package br.com.acc.bancoonline.service;
 
 import br.com.acc.bancoonline.dto.ContaCorrenteDTO;
-import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
-import br.com.acc.bancoonline.exceptions.ClienteNaoEncontradoException;
-import br.com.acc.bancoonline.exceptions.ContaCorrenteNaoEncontradaException;
+import br.com.acc.bancoonline.dto.ExtratoDTO;
+import br.com.acc.bancoonline.enums.OperacaoEnum;
+import br.com.acc.bancoonline.exceptions.*;
 import br.com.acc.bancoonline.model.ContaCorrente;
 import br.com.acc.bancoonline.model.Extrato;
 import br.com.acc.bancoonline.repository.ContaCorrenteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,6 +20,8 @@ public class ContaCorrenteService {
     private final ContaCorrenteRepository repository;
 
     private final ClienteService clienteService;
+
+    private final ExtratoService extratoService;
     
     public void create(ContaCorrenteDTO contaCorrenteDTO) throws CampoVazioGenericoException, ClienteNaoEncontradoException {
         if (Objects.isNull(contaCorrenteDTO.getAgencia()) && Objects.isNull(contaCorrenteDTO.getNumero()) ){
@@ -61,4 +63,63 @@ public class ContaCorrenteService {
         ContaCorrente contaCorrente = this.findById(id);
         repository.delete(contaCorrente);
     }
+
+    public double depositar(int idContaCorrente, double valor) throws DepositoInvalidoException, ContaCorrenteNaoEncontradaException, CampoVazioGenericoException {
+        if (valor < 0) {
+            throw new DepositoInvalidoException();
+        }
+        ContaCorrente contaCorrente = this.findById(idContaCorrente);
+        contaCorrente.setSaldo(contaCorrente.getSaldo() + valor);
+        ExtratoDTO extratoDTO = new ExtratoDTO();
+        extratoDTO.setOperacao(OperacaoEnum.DEPOSITO.toString());
+        extratoDTO.setValorOperacao(valor);
+        extratoDTO.setDataHoraMovimento(LocalDateTime.now());
+        extratoDTO.setIdContaCorrente(idContaCorrente);
+        extratoService.create(extratoDTO);
+        repository.save(contaCorrente);
+        return contaCorrente.getSaldo();
+    }
+
+    public double sacar(int idContaCorrente, double valor) throws ContaCorrenteNaoEncontradaException, SaqueInvalidoException, CampoVazioGenericoException {
+        ContaCorrente contaCorrente = this.findById(idContaCorrente);
+        if (valor  > contaCorrente.getSaldo()) {
+            throw new SaqueInvalidoException();
+        }
+        ExtratoDTO extratoDTO = new ExtratoDTO();
+        extratoDTO.setOperacao(OperacaoEnum.SAQUE.toString());
+        extratoDTO.setValorOperacao(valor);
+        extratoDTO.setDataHoraMovimento(LocalDateTime.now());
+        extratoDTO.setIdContaCorrente(idContaCorrente);
+        extratoService.create(extratoDTO);
+        contaCorrente.setSaldo(contaCorrente.getSaldo() - valor);
+        repository.save(contaCorrente);
+        return contaCorrente.getSaldo();
+    }
+    public double transferir(double valor, int idConta, String cpfDestinatario) throws ContaCorrenteNaoEncontradaException, SaqueInvalidoException, CampoVazioGenericoException {
+        ContaCorrente conta = this.findById(idConta);
+        ContaCorrente contaDestinatario = this.getContaByCpf(cpfDestinatario);
+        if (valor > conta.getSaldo()) {
+            throw new SaqueInvalidoException();
+        }
+        ExtratoDTO extratoDTO = new ExtratoDTO();
+        extratoDTO.setOperacao(OperacaoEnum.TRANFERENCIA.toString());
+        extratoDTO.setValorOperacao(valor);
+        extratoDTO.setDataHoraMovimento(LocalDateTime.now());
+        extratoDTO.setIdContaCorrente(idConta);
+        extratoService.create(extratoDTO);
+        conta.setSaldo(conta.getSaldo() - valor);
+        contaDestinatario.setSaldo(contaDestinatario.getSaldo() + valor);
+        repository.save(conta);
+        repository.save(contaDestinatario);
+        return conta.getSaldo();
+    }
+
+    public ContaCorrente getContaByCpf(String cpf) throws ContaCorrenteNaoEncontradaException {
+        if (repository.findByClienteCpf(cpf).isEmpty()) {
+            throw new ContaCorrenteNaoEncontradaException();
+        }
+        return repository.findByClienteCpf(cpf).get();
+    }
+
+
 }
