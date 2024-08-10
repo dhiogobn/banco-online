@@ -85,6 +85,16 @@ public class ClienteService {
         }
         return repository.findById(id).get();
     }
+
+    public Cliente findByCpf(String cpf) throws ClienteNaoEncontradoException {
+        Cliente cliente = repository.findByCpf(cpf);
+
+        if (cliente == null) {
+            throw new ClienteNaoEncontradoException();
+        }
+
+        return cliente;
+    }
     
     public List<Cliente> findAll() {
         return repository.findAll();
