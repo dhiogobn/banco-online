@@ -1,13 +1,13 @@
 package br.com.acc.bancoonline;
 import br.com.acc.bancoonline.dto.ContaCorrenteDTO;
-import br.com.acc.bancoonline.exceptions.CampoVazioGenericoException;
-import br.com.acc.bancoonline.exceptions.ClienteNaoEncontradoException;
-import br.com.acc.bancoonline.exceptions.ContaCorrenteNaoEncontradaException;
+import br.com.acc.bancoonline.dto.ExtratoDTO;
+import br.com.acc.bancoonline.exceptions.*;
 import br.com.acc.bancoonline.model.ContaCorrente;
 import br.com.acc.bancoonline.model.Cliente;
 import br.com.acc.bancoonline.repository.ContaCorrenteRepository;
 import br.com.acc.bancoonline.service.ClienteService;
 import br.com.acc.bancoonline.service.ContaCorrenteService;
+import br.com.acc.bancoonline.service.ExtratoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,6 +29,9 @@ public class ContaCorrenteServiceTest {
 
     @InjectMocks
     private ContaCorrenteService service;
+
+    @Mock
+    private ExtratoService extratoService;
 
     private ContaCorrenteDTO contaCorrenteDTO;
     private ContaCorrente contaCorrente;
@@ -154,4 +157,103 @@ public class ContaCorrenteServiceTest {
 
         verify(repository, times(1)).delete(contaCorrente);
     }
+
+    @Test
+    void testDepositarValidAmount() throws DepositoInvalidoException, ContaCorrenteNaoEncontradaException, CampoVazioGenericoException {
+        when(repository.findById(1)).thenReturn(Optional.of(contaCorrente));
+        doNothing().when(extratoService).create(any(ExtratoDTO.class));
+
+        double novoSaldo = service.depositar(1, 500.00);
+
+        assertEquals(1500.00, novoSaldo);
+        verify(repository, times(1)).save(contaCorrente);
+    }
+
+    @Test
+    void testDepositarInvalidAmountThrowsDepositoInvalidoException() {
+        assertThrows(DepositoInvalidoException.class, () -> {
+            service.depositar(1, -100.00);
+        });
+    }
+
+    @Test
+    void testSacarValidAmount() throws ContaCorrenteNaoEncontradaException, SaqueInvalidoException, CampoVazioGenericoException {
+        when(repository.findById(1)).thenReturn(Optional.of(contaCorrente));
+        doNothing().when(extratoService).create(any(ExtratoDTO.class));
+
+        double novoSaldo = service.sacar(1, 500.00);
+
+        assertEquals(500.00, novoSaldo);
+        verify(repository, times(1)).save(contaCorrente);
+    }
+
+    @Test
+    void testSacarInvalidAmountThrowsSaqueInvalidoException() {
+        when(repository.findById(1)).thenReturn(Optional.of(contaCorrente));
+
+        assertThrows(SaqueInvalidoException.class, () -> {
+            service.sacar(1, 1500.00);
+        });
+    }
+
+    @Test
+    void testTransferirValidAmount() throws ContaCorrenteNaoEncontradaException, SaqueInvalidoException, CampoVazioGenericoException {
+        ContaCorrente contaDestinatario = new ContaCorrente();
+        contaDestinatario.setId(2);
+        contaDestinatario.setNumero("54321");
+        contaDestinatario.setAgencia("002");
+        contaDestinatario.setSaldo(500.00);
+        contaDestinatario.setCliente(cliente);
+
+        // Mock para findById
+        when(repository.findById(1)).thenReturn(Optional.of(contaCorrente));
+
+        // Mock para findByClienteCpf
+        when(repository.findByClienteCpf("12345678909")).thenReturn(Optional.of(contaDestinatario));
+
+        // Mock para extratoService.create
+        doNothing().when(extratoService).create(any(ExtratoDTO.class));
+
+        double novoSaldo = service.transferir(500.00, 1, "12345678909");
+
+        // Verificações
+        assertEquals(500.00, novoSaldo);
+        assertEquals(1000.00, contaDestinatario.getSaldo());
+        verify(repository, times(1)).save(contaCorrente);
+        verify(repository, times(1)).save(contaDestinatario);
+    }
+
+    @Test
+    void testTransferirInvalidAmountThrowsSaqueInvalidoException() {
+        // Mock para findById
+        when(repository.findById(1)).thenReturn(Optional.of(contaCorrente));
+
+        // Mock para findByClienteCpf para retornar uma Optional vazia, simulando a conta destinatária não existente
+        when(repository.findByClienteCpf("12345678909")).thenReturn(Optional.empty());
+
+        // Espera-se que a exceção SaqueInvalidoException seja lançada devido ao saldo insuficiente
+        assertThrows(SaqueInvalidoException.class, () -> {
+            service.transferir(1500.00, 1, "12345678909");
+        });
+    }
+
+    @Test
+    void testGetContaByCpfExisting() throws ContaCorrenteNaoEncontradaException {
+        when(repository.findByClienteCpf("12345678909")).thenReturn(Optional.of(contaCorrente));
+
+        ContaCorrente foundContaCorrente = service.getContaByCpf("12345678909");
+
+        assertEquals(contaCorrente, foundContaCorrente);
+    }
+
+    @Test
+    void testGetContaByCpfNonExistingThrowsContaCorrenteNaoEncontradaException() {
+        when(repository.findByClienteCpf("12345678909")).thenReturn(Optional.empty());
+
+        assertThrows(ContaCorrenteNaoEncontradaException.class, () -> {
+            service.getContaByCpf("12345678909");
+        });
+    }
+
+
 }
