@@ -27,5 +27,6 @@ public class Cliente {
 
     @Column(length = 20, nullable = false)
     private String telefone;
+
 }
 

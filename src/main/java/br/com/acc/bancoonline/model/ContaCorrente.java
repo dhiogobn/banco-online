@@ -27,6 +27,6 @@ public class ContaCorrente {
     @Column
     private double saldo;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Cliente cliente;
 }

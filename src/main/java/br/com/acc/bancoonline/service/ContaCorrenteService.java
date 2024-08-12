@@ -7,8 +7,10 @@ import br.com.acc.bancoonline.exceptions.*;
 import br.com.acc.bancoonline.model.ContaCorrente;
 import br.com.acc.bancoonline.model.Extrato;
 import br.com.acc.bancoonline.repository.ContaCorrenteRepository;
+import br.com.acc.bancoonline.repository.ExtratoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ContaCorrenteService {
     private final ContaCorrenteRepository repository;
+    private final ExtratoRepository extratoRepository;
 
     private final ClienteService clienteService;
 
@@ -58,9 +61,11 @@ public class ContaCorrenteService {
         contaCorrente.setCliente(clienteService.findById(newContaCorrenteDTO.getIdCliente()));
         return repository.save(contaCorrente);
     }
-    
+
+    @Transactional
     public void deleteById(int id) throws ContaCorrenteNaoEncontradaException {
         ContaCorrente contaCorrente = this.findById(id);
+        extratoRepository.deleteByContaCorrenteId(id);
         repository.delete(contaCorrente);
     }
 

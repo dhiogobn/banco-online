@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface ExtratoRepository extends JpaRepository<Extrato, Integer> {
 
     Optional<List<Extrato>> findByContaCorrenteId(int id);
-
+    void deleteByContaCorrenteId(int id);
 
 }

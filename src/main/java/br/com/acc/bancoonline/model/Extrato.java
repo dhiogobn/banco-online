@@ -23,7 +23,7 @@ public class Extrato {
     @Column
     private double valorOperacao;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     ContaCorrente contaCorrente;
 
 }
