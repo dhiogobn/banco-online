@@ -87,8 +87,8 @@ public class ClienteService {
     }
 
     public Cliente findByCpf(String cpf) throws ClienteNaoEncontradoException {
-        Cliente cliente = repository.findByCpf(cpf);
 
+        Cliente cliente = repository.findByCpf(cpf.replaceAll("\\D", ""));
         if (cliente == null) {
             throw new ClienteNaoEncontradoException();
         }

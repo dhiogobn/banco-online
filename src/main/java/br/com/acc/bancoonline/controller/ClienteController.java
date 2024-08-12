@@ -34,7 +34,7 @@ public class ClienteController {
     }
 
     @GetMapping("/unique/{cpf}")
-    public ResponseEntity<Cliente> findById(@PathVariable String cpf) throws ClienteNaoEncontradoException {
+    public ResponseEntity<Cliente> findByCpf(@PathVariable String cpf) throws ClienteNaoEncontradoException {
         try {
             return ResponseEntity.ok(service.findByCpf(cpf));
         } catch (ClienteNaoEncontradoException error) {
