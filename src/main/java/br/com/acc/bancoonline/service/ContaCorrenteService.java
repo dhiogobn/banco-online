@@ -120,15 +120,10 @@ public class ContaCorrenteService {
     }
 
     public ContaCorrente getContaByCpf(String cpf) throws ContaCorrenteNaoEncontradaException {
-        String cpfFormated = this.formatCpf(cpf);
-        if (repository.findByClienteCpf(cpfFormated).isEmpty()) {
+        if (repository.findByClienteCpf(cpf).isEmpty()) {
             throw new ContaCorrenteNaoEncontradaException();
         }
-        return repository.findByClienteCpf(cpfFormated).get();
-    }
-
-    public String formatCpf(String cpf) {
-        return cpf.replaceAll("\\D", "");
+        return repository.findByClienteCpf(cpf).get();
     }
 
 
