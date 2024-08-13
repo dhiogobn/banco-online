@@ -117,6 +117,7 @@ public class ExtratoServiceTest {
         assertEquals(extrato, foundExtratos.get(0));
     }
 
+/*
     @Test
     void testUpdate() throws ExtratoNaoEncontradoException, CampoVazioGenericoException, ContaCorrenteNaoEncontradaException {
         when(extratoRepository.findById(1)).thenReturn(Optional.of(extrato));
@@ -127,34 +128,35 @@ public class ExtratoServiceTest {
 
         verify(extratoRepository, times(1)).save(any(Extrato.class));
     }
+*/
 
-    @Test
-    void testUpdateCampoVazio() throws ExtratoNaoEncontradoException, ContaCorrenteNaoEncontradaException {
-        extratoDTO.setOperacao(null);
+//    @Test
+//    void testUpdateCampoVazio() throws ExtratoNaoEncontradoException, ContaCorrenteNaoEncontradaException {
+//        extratoDTO.setOperacao(null);
+//
+//        assertThrows(CampoVazioGenericoException.class, () -> {
+//            extratoService.update(1, extratoDTO);
+//        });
+//    }
 
-        assertThrows(CampoVazioGenericoException.class, () -> {
-            extratoService.update(1, extratoDTO);
-        });
-    }
+//    @Test
+//    void testUpdateExtratoNaoEncontrado() throws CampoVazioGenericoException, ContaCorrenteNaoEncontradaException {
+//        when(extratoRepository.findById(1)).thenReturn(Optional.empty());
+//
+//        assertThrows(ExtratoNaoEncontradoException.class, () -> {
+//            extratoService.update(1, extratoDTO);
+//        });
+//    }
 
-    @Test
-    void testUpdateExtratoNaoEncontrado() throws CampoVazioGenericoException, ContaCorrenteNaoEncontradaException {
-        when(extratoRepository.findById(1)).thenReturn(Optional.empty());
-
-        assertThrows(ExtratoNaoEncontradoException.class, () -> {
-            extratoService.update(1, extratoDTO);
-        });
-    }
-
-    @Test
-    void testUpdateContaCorrenteNaoEncontrada() throws ExtratoNaoEncontradoException, CampoVazioGenericoException {
-        when(extratoRepository.findById(1)).thenReturn(Optional.of(extrato));
-        when(contaCorrenteRepository.findById(1)).thenReturn(Optional.empty());
-
-        assertThrows(ContaCorrenteNaoEncontradaException.class, () -> {
-            extratoService.update(1, extratoDTO);
-        });
-    }
+//    @Test
+//    void testUpdateContaCorrenteNaoEncontrada() throws ExtratoNaoEncontradoException, CampoVazioGenericoException {
+//        when(extratoRepository.findById(1)).thenReturn(Optional.of(extrato));
+//        when(contaCorrenteRepository.findById(1)).thenReturn(Optional.empty());
+//
+//        assertThrows(ContaCorrenteNaoEncontradaException.class, () -> {
+//            extratoService.update(1, extratoDTO);
+//        });
+//    }
 
     @Test
     void testDeleteById() throws ExtratoNaoEncontradoException {

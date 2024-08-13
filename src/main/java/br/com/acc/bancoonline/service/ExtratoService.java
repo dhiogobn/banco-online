@@ -52,19 +52,19 @@ public class ExtratoService {
         return repository.findAll();
     }
     
-    public Extrato update(int id, ExtratoDTO newExtratoDTO) throws ExtratoNaoEncontradoException, CampoVazioGenericoException, ContaCorrenteNaoEncontradaException {
-        Extrato extrato = this.findById(id);
-        if (Objects.isNull(newExtratoDTO.getDataHoraMovimento()) || Objects.isNull(newExtratoDTO.getOperacao())) {
-            throw new CampoVazioGenericoException();
-        }
-        extrato.setOperacao(newExtratoDTO.getOperacao());
-        extrato.setValorOperacao(newExtratoDTO.getValorOperacao());
-        extrato.setDataHoraMovimento(newExtratoDTO.getDataHoraMovimento());
-        extrato.setContaCorrente(getContaCorrenteById(newExtratoDTO.getIdContaCorrente()));
-
-
-        return repository.save(extrato);
-    }
+//    public Extrato update(int id, ExtratoDTO newExtratoDTO) throws ExtratoNaoEncontradoException, CampoVazioGenericoException, ContaCorrenteNaoEncontradaException {
+//        Extrato extrato = this.findById(id);
+//        if (Objects.isNull(newExtratoDTO.getDataHoraMovimento()) || Objects.isNull(newExtratoDTO.getOperacao())) {
+//            throw new CampoVazioGenericoException();
+//        }
+//        extrato.setOperacao(newExtratoDTO.getOperacao());
+//        extrato.setValorOperacao(newExtratoDTO.getValorOperacao());
+//        extrato.setDataHoraMovimento(newExtratoDTO.getDataHoraMovimento());
+//        extrato.setContaCorrente(getContaCorrenteById(newExtratoDTO.getIdContaCorrente()));
+//
+//
+//        return repository.save(extrato);
+//    }
     
     public void deleteById(int id) throws ExtratoNaoEncontradoException {
         Extrato extrato = this.findById(id);

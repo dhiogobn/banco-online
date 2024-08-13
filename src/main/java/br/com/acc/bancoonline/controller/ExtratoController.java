@@ -38,10 +38,10 @@ public class ExtratoController {
         return ResponseEntity.ok(service.findAll());
     }
     
-    @PutMapping("/{id}")
-    public ResponseEntity<Extrato> update(@PathVariable int id, @RequestBody ExtratoDTO extratoDTO) throws ExtratoNaoEncontradoException, ContaCorrenteNaoEncontradaException, CampoVazioGenericoException {
-        return ResponseEntity.ok(service.update(id, extratoDTO));
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<Extrato> update(@PathVariable int id, @RequestBody ExtratoDTO extratoDTO) throws ExtratoNaoEncontradoException, ContaCorrenteNaoEncontradaException, CampoVazioGenericoException {
+//        return ResponseEntity.ok(service.update(id, extratoDTO));
+//    }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable int id) throws ExtratoNaoEncontradoException {
